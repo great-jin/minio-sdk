@@ -1,11 +1,11 @@
-### minio-demo
+### 一、minio-demo
 Java基于minio开发教程。
 
 
 官方教程文档：https://docs.min.io/?ref=con
 
 
-### minio 安装
+### 二、minio 安装
 1.进入官网进行下载，只需下载服务端即可。
 ```
 https://min.io/download
