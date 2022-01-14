@@ -19,4 +19,5 @@ minio.exe server D:\Develop\Minio\date
 其中`` D:\Develop\Minio\date ``表示minio后续数据存放位置。
 
 
+
 3. 双击启动`` bat ``文件即可，控制台会自动显示访问地址以及默认的登录账号。
