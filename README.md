@@ -1,5 +1,5 @@
 ### 一、minio-demo
-Java基于minio开发教程。
+minio的Java API开发教程。
 
 
 官方教程文档：https://docs.min.io/?ref=con
