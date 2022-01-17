@@ -1,4 +1,4 @@
-package com.linewell;
+package com.budai;
 
 import io.minio.*;
 import io.minio.errors.*;
@@ -26,7 +26,7 @@ public class DemoApplicationTests {
 
 
     /**
-     * Describe：初始化一个Minio对象
+     * Describe：初始化 Minio 对象
      */
     @Before
     public void init() throws Exception {
@@ -49,7 +49,7 @@ public class DemoApplicationTests {
     public void ExistMinioBucket() throws Exception {
         boolean found = minioClient.bucketExists(
                 BucketExistsArgs.builder()
-                    .bucket("lwbucket")     // 需查询的桶名
+                    .bucket("lwbucket")
                     .build());
         if (found) {
             System.out.println("lwbucket 已存在");
@@ -60,7 +60,7 @@ public class DemoApplicationTests {
 
 
     /**
-     * Describe：新建一个存储桶
+     * Describe：新建存储桶
      *
      * 存储桶名不能重复且命名必须遵守Amazon S3标准
      * 不能含有下划线等特殊字符，不能包含大写字符
@@ -68,20 +68,20 @@ public class DemoApplicationTests {
     @Test
     public void CreateMinioBucket() throws Exception {
         minioClient.makeBucket(MakeBucketArgs.builder()
-                .bucket("newbucket")    // 需新增的桶名
+                .bucket("newbucket")
                 .build());
     }
 
 
     /**
-     * Describe：删除一个存储桶
+     * Describe：删除存储桶
      *
      * 只能删除空的存储桶，非空存储桶想要删除必须先清空桶内文件
      */
     @Test
     public void DeleteMinioBucket() throws Exception {
         minioClient.removeBucket(RemoveBucketArgs.builder()
-                .bucket("newbucket")    // 需删除的桶名
+                .bucket("newbucket")
                 .build());
     }
 
@@ -93,8 +93,8 @@ public class DemoApplicationTests {
     public void GetMinioFile() throws Exception {
         try (InputStream is = minioClient.getObject(
                 GetObjectArgs.builder()
-                        .bucket("newbucket")    // 桶名
-                        .object("1.csv")        // 桶内的文件名
+                        .bucket("newbucket")
+                        .object("1.csv")        
                         .build())) {
             int ch;
             while ((ch = is.read()) != -1) {
@@ -126,9 +126,8 @@ public class DemoApplicationTests {
         builder.append("1.csv");
         // 最终在存储桶中的文件名格式：4569d587-514e-4caa-852a-af277eadb48b_1.csv
 
-        // 从本地 E:\TEMP\CSV 路径下读取 1.csv 文件存入桶中
         // 生产环境中文件流通常通过接口参数传入
-        File file = new File("E:\\TEMP\\CSV\\1.csv");
+        File file = new File("./resources/Files/test.csv");
         if (file.isFile()) {
             FileInputStream fis = new FileInputStream(file);
             try {
@@ -153,8 +152,8 @@ public class DemoApplicationTests {
     public void DeleteMinioFile() throws Exception {
         minioClient.removeObject(
                 RemoveObjectArgs.builder()
-                        .bucket("newbucket")    // 桶名
-                        .object("1.csv")        //桶内文件名
+                        .bucket("newbucket")
+                        .object("1.csv")
                         .build());
     }
 
@@ -166,7 +165,7 @@ public class DemoApplicationTests {
     public void ListEntireMinio() throws Exception {
         Iterable<Result<Item>> results = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket("lwbucket")     // 桶名
+                        .bucket("lwbucket")
                         .build());
 
         StringBuilder builder = new StringBuilder();
@@ -190,7 +189,7 @@ public class DemoApplicationTests {
     public void ListPartMinio() throws Exception {
         Iterable<Result<Item>> results = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket("lwbucket")     // 桶名
+                        .bucket("lwbucket")
                         .build());
 
         StringBuilder builder = new StringBuilder();
@@ -243,7 +242,7 @@ public class DemoApplicationTests {
 
 
     /**
-     * Describe：从存储桶创建到上传文件下载文件、查看信息到最后删除的完整流程
+     * Describe：从创建存储桶到上传、下载文件、查看信息到删除的完整流程
      */
     @Test
     public void EntireProcessMinio() throws Exception{

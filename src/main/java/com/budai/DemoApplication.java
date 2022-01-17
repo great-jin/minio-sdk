@@ -1,4 +1,4 @@
-package com.linewell;
+package com.budai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
