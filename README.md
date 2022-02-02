@@ -34,17 +34,18 @@ https://github.com/winsw/winsw/releases
 
 
 2.创建配置文件
-xml文件必须和WinSW文件名一致，将`` WinSW.xml ``文件和`` WinSW.exe ``置于`` minio.exe ``同级目录。
+xml文件必须和MinioServer文件名一致，将`` MinioServer.xml ``文件和`` MinioServer.exe ``置于`` minio.exe ``同级目录。
 ```xml
 <service>
     <id>MinioServer</id>
     <name>MinioServer</name>
     <description>minio文件存储服务器</description>
-    <!-- 可设置环境变量 -->
+    <!-- 环境变量配置 -->
     <env name="HOME" value="%BASE%"/>
     <executable>%BASE%\minio.exe</executable>
     <arguments>server "%BASE%\data"</arguments>
-    <!-- <logmode>rotate</logmode> -->
+    
+    <!-- 日志配置 -->
     <logpath>%BASE%\logs</logpath>
     <log mode="roll-by-size-time">
       <sizeThreshold>10240</sizeThreshold>
@@ -57,7 +58,7 @@ xml文件必须和WinSW文件名一致，将`` WinSW.xml ``文件和`` WinSW.exe
 ```
 
 
-3.在该目录下新建命令窗口，输入：`` WinSW.exe install ``。
+3.在该目录下新建命令窗口，输入：`` MinioServer.exe install ``。
 
 
 4.Windows进入服务找到`` WinSW ``服务启动即可。
