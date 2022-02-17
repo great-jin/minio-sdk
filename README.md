@@ -1,5 +1,5 @@
-### 一、Minio-demo
-minio的Java API开发教程。
+### 一、Minio-SDK
+minio的SDK开发教程。
 
 
 官方教程文档：https://docs.min.io/?ref=con
