@@ -1,5 +1,3 @@
-package com.budai;
-
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
@@ -13,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public class DemoApplicationTests {
+public class MinioTest {
 
     /**
      * 参考文档
@@ -49,8 +47,8 @@ public class DemoApplicationTests {
     public void ExistMinioBucket() throws Exception {
         boolean found = minioClient.bucketExists(
                 BucketExistsArgs.builder()
-                    .bucket("lwbucket")
-                    .build());
+                        .bucket("lwbucket")
+                        .build());
         if (found) {
             System.out.println("lwbucket 已存在");
         } else {
@@ -94,7 +92,7 @@ public class DemoApplicationTests {
         try (InputStream is = minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket("newbucket")
-                        .object("1.csv")        
+                        .object("1.csv")
                         .build())) {
             int ch;
             while ((ch = is.read()) != -1) {
@@ -257,8 +255,8 @@ public class DemoApplicationTests {
             // 不存在，进行创建
             minioClient.makeBucket(
                     MakeBucketArgs.builder()
-                        .bucket(bucketName)
-                        .build());
+                            .bucket(bucketName)
+                            .build());
         }
 
         // 2.读取本地文件存入对应存储桶中
