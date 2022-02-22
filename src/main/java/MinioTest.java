@@ -22,20 +22,18 @@ public class MinioTest {
 
     public MinioClient minioClient;
 
-
     /**
      * Describe：初始化 Minio 对象
      */
     @Before
     public void init() throws Exception {
         minioClient = MinioClient.builder()
-                // 填入 minio API
+                // 填入 Minio API
                 .endpoint("http://{url}:{port}")
                 // 填入用户名、密码
                 .credentials("username", "password")
                 .build();
     }
-
 
     /**
      * Describe：判断存储桶是否已存在
@@ -47,15 +45,14 @@ public class MinioTest {
     public void ExistMinioBucket() throws Exception {
         boolean found = minioClient.bucketExists(
                 BucketExistsArgs.builder()
-                        .bucket("lwbucket")
+                        .bucket("bucket")
                         .build());
         if (found) {
-            System.out.println("lwbucket 已存在");
+            System.out.println("bucket 已存在");
         } else {
-            System.out.println("lwbucket 不存在");
+            System.out.println("bucket 不存在");
         }
     }
-
 
     /**
      * Describe：新建存储桶
@@ -70,7 +67,6 @@ public class MinioTest {
                 .build());
     }
 
-
     /**
      * Describe：删除存储桶
      *
@@ -83,7 +79,6 @@ public class MinioTest {
                 .build());
     }
 
-
     /**
      * Describe：从指定存储桶获取文件
      */
@@ -92,23 +87,22 @@ public class MinioTest {
         try (InputStream is = minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket("newbucket")
-                        .object("1.csv")
+                        .object("user.csv")
                         .build())) {
             int ch;
             while ((ch = is.read()) != -1) {
-                // 控制台打印内容，可根据需要进行额外操作
+                // 控制台打印内容
                 System.out.write(ch);
             }
         }catch (XmlParserException | ServerException | NoSuchAlgorithmException
                 | InsufficientDataException | InvalidKeyException | IOException e) {
-            // 生产环境中应针对异常进行分类处理，这里demo测试就简单抛出。
+            // 应针对异常进行分类处理，这里demo测试就简单抛出。
             throw new PrinterException();
         } catch (InvalidResponseException | ErrorResponseException | InternalException e) {
-            // 生产环境中应针对异常进行分类处理，这里demo测试就简单抛出。
+            // 应针对异常进行分类处理，这里demo测试就简单抛出。
             throw new PrinterException();
         }
     }
-
 
     /**
      * Describe：将文件存入指定顶存储桶内
@@ -121,16 +115,16 @@ public class MinioTest {
         StringBuilder builder = new StringBuilder();
         builder.append(UUID.randomUUID());
         builder.append("_");
-        builder.append("1.csv");
-        // 最终在存储桶中的文件名格式：4569d587-514e-4caa-852a-af277eadb48b_1.csv
+        builder.append("user.csv");
+        // 最终在存储桶中的文件名格式：<uuid>_user.csv
 
         // 生产环境中文件流通常通过接口参数传入
-        File file = new File("./resources/Files/test.csv");
+        File file = new File("src/main/resources/files/user.csv");
         if (file.isFile()) {
             FileInputStream fis = new FileInputStream(file);
             try {
                 minioClient.putObject(PutObjectArgs.builder()
-                        .bucket("lwbucket")
+                        .bucket("bucket")
                         .object(builder.toString())
                         .stream(fis, fis.available(), -1)
                         .build());
@@ -142,7 +136,6 @@ public class MinioTest {
         }
     }
 
-
     /**
      * Describe：从指定存储桶内删除文件
      */
@@ -151,10 +144,9 @@ public class MinioTest {
         minioClient.removeObject(
                 RemoveObjectArgs.builder()
                         .bucket("newbucket")
-                        .object("1.csv")
+                        .object("user.csv")
                         .build());
     }
-
 
     /**
      * Describe：列出当前存储桶下所有文件相关信息
@@ -163,7 +155,7 @@ public class MinioTest {
     public void ListEntireMinio() throws Exception {
         Iterable<Result<Item>> results = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket("lwbucket")
+                        .bucket("bucket")
                         .build());
 
         StringBuilder builder = new StringBuilder();
@@ -179,7 +171,6 @@ public class MinioTest {
         System.out.println(builder);
     }
 
-
     /**
      * Describe：列出当前存储桶下某个时间点之后存入的文件相关信息
      */
@@ -187,7 +178,7 @@ public class MinioTest {
     public void ListPartMinio() throws Exception {
         Iterable<Result<Item>> results = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket("lwbucket")
+                        .bucket("bucket")
                         .build());
 
         StringBuilder builder = new StringBuilder();
@@ -209,7 +200,6 @@ public class MinioTest {
         }
         System.out.println(builder);
     }
-
 
     /**
      * Describe：指定从某一个字符之后开始列出文件信息
@@ -238,7 +228,6 @@ public class MinioTest {
         System.out.println(builder);
     }
 
-
     /**
      * Describe：从创建存储桶到上传、下载文件、查看信息到删除的完整流程
      */
@@ -264,10 +253,10 @@ public class MinioTest {
         // 定义文件名
         fileName.append(UUID.randomUUID());
         fileName.append("_");
-        fileName.append("1.csv");
+        fileName.append("user.csv");
 
-        // 从本地 E:\TEMP\CSV 下读取 1.csv 文件存入桶中
-        File file = new File("E:\\TEMP\\CSV\\1.csv");
+        // 读取 user.csv 文件存入桶中
+        File file = new File("src/main/resources/files/user.csv");
         if (file.isFile()) {
             FileInputStream fis = new FileInputStream(file);
             try {
