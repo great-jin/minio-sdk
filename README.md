@@ -1,11 +1,11 @@
-### 一、Minio-SDK
+## 一、Minio-SDK
 minio的SDK开发教程。
 
 
 官方教程文档：https://docs.min.io/?ref=con
 
 
-### 二、Minio 安装
+## 二、Minio 安装
 1.进入官网进行下载，只需下载服务端即可。
 ```
 https://min.io/download
@@ -25,7 +25,7 @@ minio.exe server D:\Develop\Minio\date
 4.双击启动`` bat ``文件即可，控制台会自动显示访问地址以及默认的登录账号。
 
 
-### 三、Minio 后台运行
+## 三、Minio 后台运行
 后台启动的话就无需前台一直开着命令行窗口，更便捷。
 
 
