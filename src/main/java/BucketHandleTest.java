@@ -20,9 +20,9 @@ public class BucketHandleTest {
     public void init() throws Exception {
         minioClient = MinioClient.builder()
                 // 填入 Minio API
-                .endpoint("http://localhost:9000")
+                .endpoint("http://10.231.6.61:9000")
                 // 填入用户名、密码
-                .credentials("minioadmin", "minioadmin")
+                .credentials("minioadmin", "minio123456")
                 .build();
     }
 

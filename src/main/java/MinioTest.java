@@ -28,9 +28,9 @@ public class MinioTest {
     public void init() throws Exception {
         minioClient = MinioClient.builder()
                 // 填入 Minio API
-                .endpoint("http://{url}:{port}")
+                .endpoint("http://10.231.6.61:9000")
                 // 填入用户名、密码
-                .credentials("username", "password")
+                .credentials("minioadmin", "minio123456")
                 .build();
     }
 
