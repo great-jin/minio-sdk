@@ -1,7 +1,13 @@
+import com.j256.simplemagic.ContentInfo;
+import com.j256.simplemagic.ContentInfoUtil;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -152,16 +157,56 @@ public class FilesHandleTest {
         }
     }
 
-    /*static {
-        System.out.println(Method.GET);
-        System.out.println(Method.POST);
-        System.out.println(Method.DELETE);
-        System.out.println(Method.PUT);
-        System.out.println(Method.HEAD);
+    @Test
+    public void PutMinio1File() throws Exception {
+        String bucketName = "testbucket";
+        String fileName = "12wefrwe32_user.csv";
 
-        System.out.println(TimeUnit.SECONDS);
-        System.out.println(TimeUnit.MINUTES);
-        System.out.println(TimeUnit.HOURS);
-        System.out.println(TimeUnit.DAYS);
-    }*/
+        File file = new File("src/main/resources/files/user.csv");
+        if (file.isFile()) {
+            try (InputStream in = new FileInputStream(file)) {
+                DefaultDetector detector = new DefaultDetector();
+                TikaInputStream tikaStream = TikaInputStream.get(in);
+                Metadata metadata = new Metadata();
+                metadata.set(Metadata.RESOURCE_NAME_KEY, fileName);
+                MediaType mediatype = detector.detect(tikaStream, metadata);
+                String contentType = mediatype.toString();
+
+                minioClient.putObject(PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(fileName)
+                        .contentType(contentType)
+                        .stream(in, in.available(), -1)
+                        .build());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("文件不存在！");
+        }
+    }
+
+    @Test
+    public void PutMinio2File() throws Exception {
+        File file = new File("src/main/resources/files/user.csv");
+        if (file.isFile()) {
+            try (InputStream in = new FileInputStream(file)) {
+                String bucketName = "testbucket";
+                String fileName = "minio_user.csv";
+                ContentInfo info = ContentInfoUtil.findExtensionMatch(fileName);
+                String contentType = info.getMimeType();
+
+                minioClient.putObject(PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(fileName)
+                        .contentType(contentType)
+                        .stream(in, in.available(), -1)
+                        .build());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("文件不存在！");
+        }
+    }
 }
