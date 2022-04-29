@@ -1,3 +1,5 @@
+package minio.sdks;
+
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.Result;
@@ -11,9 +13,6 @@ public class ListFilesTest {
 
     public MinioClient minioClient;
 
-    /**
-     * Describe：初始化 Minio 对象
-     */
     @Before
     public void init() throws Exception {
         minioClient = MinioClient.builder()
@@ -101,7 +100,7 @@ public class ListFilesTest {
             builder.append(result.get().size());
             builder.append("\n");
         }
+
         System.out.println(builder);
     }
-
 }

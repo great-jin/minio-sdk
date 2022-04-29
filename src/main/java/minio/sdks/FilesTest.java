@@ -1,13 +1,9 @@
-import com.j256.simplemagic.ContentInfo;
-import com.j256.simplemagic.ContentInfoUtil;
+package minio.sdks;
+
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,16 +14,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class FilesHandleTest {
+public class FilesTest {
 
     public MinioClient minioClient;
 
-    /**
-     * Describe：初始化 Minio 对象
-     */
     @Before
     public void init() throws Exception {
         minioClient = MinioClient.builder()
@@ -36,6 +30,24 @@ public class FilesHandleTest {
                 // 填入用户名、密码
                 .credentials("minioadmin", "minio123456")
                 .build();
+    }
+
+    @Test
+    public void FileExist() throws Exception {
+        String bucketName = "testbucket";
+        String objectName = "bdg.jpg";
+
+        List<String> list = new ArrayList<>();
+        Iterable<Result<Item>> results = minioClient.listObjects(
+                ListObjectsArgs.builder()
+                        .bucket(bucketName)
+                        .build());
+        for (Result<Item> result : results) {
+            if (!result.get().isDir()) {
+                list.add(result.get().objectName());
+            }
+        }
+        System.out.println(list.contains(objectName));
     }
 
     /**
@@ -82,13 +94,13 @@ public class FilesHandleTest {
         if (file.isFile()) {
             FileInputStream fis = new FileInputStream(file);
             try {
-                ObjectWriteResponse objectWriteResponse = minioClient.putObject(PutObjectArgs.builder()
+                ObjectWriteResponse owr = minioClient.putObject(PutObjectArgs.builder()
                         .bucket("testbucket")
                         .object(builder.toString())
                         .stream(fis, fis.available(), -1)
                         .build());
 
-                System.out.println(objectWriteResponse.toString());
+                System.out.println(owr.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -110,7 +122,7 @@ public class FilesHandleTest {
     }
 
     @Test
-    public void MinioUrl() throws Exception {
+    public void GetFilesUrl() throws Exception {
         String bucketName = "testbucket";
         String objectName = "bg.csv";
         Integer expires = 7;
@@ -123,90 +135,5 @@ public class FilesHandleTest {
                         .expiry(expires, TimeUnit.HOURS)
                         .build());
         System.out.println(url);
-    }
-
-    @Test
-    public void FileExist() throws Exception {
-        String bucketName = "testbucket";
-        String objectName = "bdg.jpg";
-        Integer expires = 7;
-
-        List<String> list = new ArrayList<>();
-        Iterable<Result<Item>> results = minioClient.listObjects(
-                ListObjectsArgs.builder()
-                        .bucket(bucketName)
-                        .build());
-        for (Result<Item> result : results) {
-            if (!result.get().isDir()) {
-                list.add(result.get().objectName());
-            }
-        }
-        System.out.println(list);
-
-        if (list.contains(objectName)) {
-            String url = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .expiry(expires, TimeUnit.HOURS)
-                            .build());
-            System.out.println(url);
-        } else {
-            System.out.println("File doesn't exist.");
-        }
-    }
-
-    @Test
-    public void PutMinio1File() throws Exception {
-        String bucketName = "testbucket";
-        String fileName = "12wefrwe32_user.csv";
-
-        File file = new File("src/main/resources/files/user.csv");
-        if (file.isFile()) {
-            try (InputStream in = new FileInputStream(file)) {
-                DefaultDetector detector = new DefaultDetector();
-                TikaInputStream tikaStream = TikaInputStream.get(in);
-                Metadata metadata = new Metadata();
-                metadata.set(Metadata.RESOURCE_NAME_KEY, fileName);
-                MediaType mediatype = detector.detect(tikaStream, metadata);
-                String contentType = mediatype.toString();
-
-                minioClient.putObject(PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .contentType(contentType)
-                        .stream(in, in.available(), -1)
-                        .build());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("文件不存在！");
-        }
-    }
-
-    @Test
-    public void PutMinio2File() throws Exception {
-        File file = new File("src/main/resources/files/user.csv");
-        if (file.isFile()) {
-            try (InputStream in = new FileInputStream(file)) {
-                String bucketName = "testbucket";
-                String fileName = "minio_user.csv";
-                ContentInfo info = ContentInfoUtil.findExtensionMatch(fileName);
-                String contentType = info.getMimeType();
-
-                minioClient.putObject(PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .contentType(contentType)
-                        .stream(in, in.available(), -1)
-                        .build());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("文件不存在！");
-        }
     }
 }

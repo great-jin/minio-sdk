@@ -1,3 +1,5 @@
+package minio.sdks;
+
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -9,13 +11,10 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BucketHandleTest {
+public class BucketTest {
 
     public MinioClient minioClient;
 
-    /**
-     * Describe：初始化 Minio 对象
-     */
     @Before
     public void init() throws Exception {
         minioClient = MinioClient.builder()
@@ -28,7 +27,6 @@ public class BucketHandleTest {
 
     /**
      * Describe：查询所有存储桶
-     *
      */
     @Test
     public void ListBucket() throws Exception {
